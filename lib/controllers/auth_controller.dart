@@ -1,12 +1,17 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mac_store_app/global_variables.dart';
 import 'package:mac_store_app/models/user.dart';
 import 'package:http/http.dart' as http;
+import 'package:mac_store_app/provider/user_provider.dart';
 import 'package:mac_store_app/services/manage_http_response.dart';
 import 'package:mac_store_app/views/screens/authentication_screen/login_screen.dart';
 import 'package:mac_store_app/views/screens/main_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+final ProviderContainer container = ProviderContainer();
 
 class AuthController {
   Future<void> signUpUsers({
@@ -75,7 +80,19 @@ class AuthController {
       manageHttpResponse(
         response: response,
         context: context,
-        onSuccess: () {
+        onSuccess: () async {
+          //Access sharedPreferences for token and user data storage
+          SharedPreferences preferences = await SharedPreferences.getInstance();
+          String token = jsonDecode(response.body)['token'];
+          //store token in shared preferences
+          await preferences.setString('auth_token', token);
+          //Encode the user data recieved from the backend as json
+          String userJson = jsonEncode(jsonDecode(response.body)['user']);
+          //update the application state with the user data using Riverpod
+          container.read(userProvider.notifier).setUser(userJson);
+          //store the data in shared preferences for future 
+          await preferences.setString('user', userJson);
+
           showSnackBar(context, 'Login successful');
           Navigator.pushAndRemoveUntil(
               context,

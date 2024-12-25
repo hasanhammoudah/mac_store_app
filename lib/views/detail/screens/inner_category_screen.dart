@@ -1,29 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:mac_store_app/controllers/subcategory_controller.dart';
+import 'package:mac_store_app/models/category.dart';
+import 'package:mac_store_app/models/subcategory.dart';
+import 'package:mac_store_app/views/detail/widgets/inner_banner_widget.dart';
+import 'package:mac_store_app/views/detail/widgets/inner_category_content_widget.dart';
+import 'package:mac_store_app/views/detail/widgets/inner_header_widget.dart';
+import 'package:mac_store_app/views/detail/widgets/subcategory_tile_widget.dart';
 import 'package:mac_store_app/views/screens/nav_screens/account_screen.dart';
 import 'package:mac_store_app/views/screens/nav_screens/cart_screen.dart';
 import 'package:mac_store_app/views/screens/nav_screens/category_screen.dart';
 import 'package:mac_store_app/views/screens/nav_screens/favorite_screen.dart';
-import 'package:mac_store_app/views/screens/nav_screens/home_screen.dart';
 import 'package:mac_store_app/views/screens/nav_screens/stores_screen.dart';
 
-class MainScreen extends StatefulWidget {
+class InnerCategoryScreen extends StatefulWidget {
+  const InnerCategoryScreen({super.key, required this.category});
+  final Category category;
+
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<InnerCategoryScreen> createState() => _InnerCategoryScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _InnerCategoryScreenState extends State<InnerCategoryScreen> {
   int _pageIndex = 0;
-  final List<Widget> _pages = [
-    const HomeScreen(),
-    const FavoriteScreen(),
-    const CategoryScreen(),
-    const StoresScreen(),
-    const CartScreen(),
-    const AccountScreen(),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final List<Widget> _pages = [
+      InnerCategoryScreenWidget(
+        category: widget.category,
+      ),
+      const FavoriteScreen(),
+      const CategoryScreen(),
+      const StoresScreen(),
+      const CartScreen(),
+      const AccountScreen(),
+    ];
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
           selectedItemColor: Colors.purple,
