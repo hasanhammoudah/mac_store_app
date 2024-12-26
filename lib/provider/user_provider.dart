@@ -24,6 +24,10 @@ class UserProvider extends StateNotifier<User?> {
   void setUser(String userJson) {
     state = User.fromJson(userJson);
   }
+
+  void signOut() {
+    state = null;
+  }
 }
 
 // make the data accessible within the application

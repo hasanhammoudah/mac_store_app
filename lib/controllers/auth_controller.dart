@@ -90,7 +90,7 @@ class AuthController {
           String userJson = jsonEncode(jsonDecode(response.body)['user']);
           //update the application state with the user data using Riverpod
           container.read(userProvider.notifier).setUser(userJson);
-          //store the data in shared preferences for future 
+          //store the data in shared preferences for future
           await preferences.setString('user', userJson);
 
           showSnackBar(context, 'Login successful');
@@ -107,6 +107,24 @@ class AuthController {
       );
     } catch (e) {
       print("Error:$e");
+    }
+  }
+
+  //SignOut
+  Future<void> signOutUser({required context}) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.remove('auth_token');
+      await prefs.remove('user');
+      container.read(userProvider.notifier).signOut();
+      //navigation the user back to the login screen
+      Navigator.pushAndRemoveUntil(context,
+          MaterialPageRoute(builder: (context) {
+        return const LoginScreen();
+      }), (route) => false);
+      showSnackBar(context, 'signout successfully');
+    } catch (e) {
+      showSnackBar(context, 'error signing out');
     }
   }
 }

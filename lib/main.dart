@@ -20,6 +20,8 @@ class MyApp extends ConsumerWidget {
     String? userJson = prefs.getString('user');
     if (token != null && userJson != null) {
       ref.read(userProvider.notifier).setUser(userJson);
+    } else {
+      ref.read(userProvider.notifier).signOut();
     }
   }
 
