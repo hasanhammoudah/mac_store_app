@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mac_store_app/provider/cart_provider.dart';
-import 'package:mac_store_app/views/detail/widgets/checkout_screen.dart';
+import 'package:mac_store_app/views/features/checkout/view/chekout_screen.dart';
 import 'package:mac_store_app/views/screens/main_screen.dart';
 
 class CartScreen extends ConsumerStatefulWidget {
@@ -18,6 +18,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
   Widget build(BuildContext context) {
     final cartData = ref.watch(cartProvider);
     final _cartProvider = ref.read(cartProvider.notifier);
+    double totalAmount = _cartProvider.calculateTotalAmount();
     return Scaffold(
       appBar: PreferredSize(
         preferredSize:
@@ -94,10 +95,10 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                   Text(
                     textAlign: TextAlign.center,
                     'your shopping cart is empty\n you can add product to your cart from the button below',
-                    style: GoogleFonts.roboto(
-                      fontSize: 15,
-                      letterSpacing: 1.7,
-                    ),
+                    style: GoogleFonts.montserrat(
+                        fontSize: 17,
+                        letterSpacing: 1.7,
+                        fontWeight: FontWeight.bold),
                   ),
                   TextButton(
                     onPressed: () {
@@ -310,11 +311,14 @@ class _CartScreenState extends ConsumerState<CartScreen> {
               ],
             ),
             ElevatedButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const CheckoutScreen();
-                }));
-              },
+              onPressed: totalAmount == 0.0
+                  ? null
+                  : () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return const CheckoutScreen();
+                      }));
+                    },
               child: const Text('Proceed to Checkout'),
             ),
           ],

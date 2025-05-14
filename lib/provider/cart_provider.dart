@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mac_store_app/models/cart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 //Define a StateNotifierProvider to expose an instance of the CartNotifier class
 //Making it accessible within the application
@@ -11,7 +14,27 @@ final cartProvider =
 //With an initial state of an empty map
 
 class CartNotifier extends StateNotifier<Map<String, Cart>> {
-  CartNotifier() : super({});
+  CartNotifier() : super({}) {
+    _loadCart();
+  }
+
+  Future<void> _loadCart() async {
+    final prefs = await SharedPreferences.getInstance();
+    final cartString = prefs.getString('cart');
+    if (cartString != null) {
+      final Map<String, dynamic> cartMap = jsonDecode(cartString);
+      final cart =
+          cartMap.map((key, value) => MapEntry(key, Cart.fromJson(value)));
+      state = cart;
+    }
+  }
+
+  // A private method that saves the current list of favorite items to sharedPreferences
+  Future<void> _saveCartToSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    final cartString = jsonEncode(state);
+    await prefs.setString('cart', cartString);
+  }
 
   //Method to add a product to the cart
   void addProductToCart({
@@ -44,6 +67,7 @@ class CartNotifier extends StateNotifier<Map<String, Cart>> {
           fullName: state[productId]!.fullName,
         ),
       };
+      _saveCartToSharedPreferences();
 
       // state.update(productId, (value) {
       //   return Cart(
@@ -76,6 +100,7 @@ class CartNotifier extends StateNotifier<Map<String, Cart>> {
           fullName: fullName,
         ),
       };
+      _saveCartToSharedPreferences();
       // state.putIfAbsent(
       //   productId,
       //   () => Cart(
@@ -100,6 +125,7 @@ class CartNotifier extends StateNotifier<Map<String, Cart>> {
       state[productId]!.quantity++;
       //Notify listeners that the state has changed
       state = {...state};
+      _saveCartToSharedPreferences();
     }
   }
 
@@ -110,6 +136,7 @@ class CartNotifier extends StateNotifier<Map<String, Cart>> {
         state[productId]!.quantity--;
         //Notify listeners that the state has changed
         state = {...state};
+        _saveCartToSharedPreferences();
       }
     }
   }
@@ -119,6 +146,7 @@ class CartNotifier extends StateNotifier<Map<String, Cart>> {
     state.remove(productId);
     //Notify listeners that the state has changed
     state = {...state};
+    _saveCartToSharedPreferences();
   }
 
   //Method to calculate the total price of the products in the cart
@@ -129,4 +157,6 @@ class CartNotifier extends StateNotifier<Map<String, Cart>> {
     });
     return totalAmount;
   }
+
+  Map<String, Cart> get getCartItems => state;
 }

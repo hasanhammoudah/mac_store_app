@@ -12,18 +12,23 @@ class Product {
   final String fullName;
   final String subCategory;
   final List<String> images;
+  final double averageRating;
+  final int totalRating;
 
-  Product(
-      {required this.id,
-      required this.productName,
-      required this.productPrice,
-      required this.quantity,
-      required this.description,
-      required this.category,
-      required this.vendorId,
-      required this.fullName,
-      required this.subCategory,
-      required this.images});
+  Product({
+    required this.id,
+    required this.productName,
+    required this.productPrice,
+    required this.quantity,
+    required this.description,
+    required this.category,
+    required this.vendorId,
+    required this.fullName,
+    required this.subCategory,
+    required this.images,
+    required this.averageRating,
+    required this.totalRating,
+  });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -37,28 +42,35 @@ class Product {
       'fullName': fullName,
       'subCategory': subCategory,
       'images': images,
+      'averageRating': averageRating,
+      'totalRating': totalRating,
     };
   }
 
- factory Product.fromMap(Map<String, dynamic> map) {
+  factory Product.fromMap(Map<String, dynamic> map) {
   return Product(
-    id: map['_id']?.toString() ?? '',
-    productName: map['productName']?.toString() ?? 'Unknown Product',
-    productPrice: int.tryParse(map['productPrice']?.toString() ?? '0') ?? 0,
-    quantity: int.tryParse(map['quantity']?.toString() ?? '0') ?? 0,
-    description: map['description']?.toString() ?? 'No description available',
-    category: map['category']?.toString() ?? 'Uncategorized',
-    vendorId: map['vendorId']?.toString() ?? '',
-    fullName: map['fullName']?.toString() ?? 'Unknown Vendor',
-    subCategory: map['subCategory']?.toString() ?? 'General',
-    images: List<String>.from(
-      (map['images'] as List<dynamic>? ?? []).map((e) =>
-        e.toString(),
-      ),
-    ),
+    id: map['_id'] as String,
+    productName: map['productName'] as String,
+    productPrice: map['productPrice'] is int
+        ? map['productPrice']
+        : (map['productPrice'] as double).toInt(),
+    quantity: map['quantity'] is int
+        ? map['quantity']
+        : (map['quantity'] as double).toInt(),
+    description: map['description'] as String,
+    category: map['category'] as String,
+    vendorId: map['vendorId'] as String,
+    fullName: map['fullName'] as String,
+    subCategory: map['subCategory'] as String,
+    images: List<String>.from((map['images'] as List<dynamic>)),
+    averageRating: map['averageRating'] is int
+        ? (map['averageRating'] as int).toDouble()
+        : map['averageRating'] as double,
+    totalRating: map['totalRating'] is int
+        ? map['totalRating']
+        : (map['totalRating'] as double).toInt(),
   );
 }
-
 
 
   String toJson() => json.encode(toMap());

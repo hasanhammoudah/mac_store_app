@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mac_store_app/models/product.dart';
 import 'package:mac_store_app/provider/cart_provider.dart';
+import 'package:mac_store_app/provider/favorite_provider.dart' as j;
 import 'package:mac_store_app/services/manage_http_response.dart';
 
 class ProductDetailScreen extends ConsumerStatefulWidget {
@@ -10,7 +11,6 @@ class ProductDetailScreen extends ConsumerStatefulWidget {
   final Product product;
 
   @override
-  // ignore: library_private_types_in_public_api
   _ProductDetailScreenState createState() => _ProductDetailScreenState();
 }
 
@@ -18,6 +18,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final _cartProvider = ref.read(cartProvider.notifier);
+    final favoriteProviderData = ref.read(j.favoriteProvider.notifier);
+    final favoriteProvider = ref.watch(j.favoriteProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -27,10 +29,35 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.favorite_border,
-            ),
+            onPressed: () {
+              favoriteProviderData.addProductToFavorite(
+                productName: widget.product.productName,
+                category: widget.product.category,
+                image: widget.product.images,
+                productPrice: widget.product.productPrice,
+                vendorId: widget.product.vendorId,
+                productQuantity: widget.product.quantity,
+                quantity: 1,
+                productId: widget.product.id,
+                description: widget.product.description,
+                fullName: widget.product.fullName,
+              );
+              showSnackBar(
+                context,
+                'added ${widget.product.productName} to favorite',
+              );
+              favoriteProvider;
+            },
+            icon: favoriteProviderData.getFavoriteItems
+                        .containsKey(widget.product.id) ==
+                    true
+                ? const Icon(
+                    Icons.favorite,
+                    color: Colors.red,
+                  )
+                : const Icon(
+                    Icons.favorite_border,
+                  ),
           ),
         ],
         centerTitle: true,
@@ -128,6 +155,37 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
               ),
             ),
           ),
+          widget.product.totalRating == 0
+              ? const Text('')
+              : Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                      ),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      Text(
+                        widget.product.averageRating.toStringAsFixed(1),
+                        style: GoogleFonts.montserrat(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      Text(
+                        "(${widget.product.totalRating} Reviews)",
+                        style: GoogleFonts.montserrat(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(

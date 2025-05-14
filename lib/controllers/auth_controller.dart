@@ -127,4 +127,50 @@ class AuthController {
       showSnackBar(context, 'error signing out');
     }
   }
+
+  // Update user's state,city and locality
+  Future<void> updateUserLocation({
+    required context,
+    required String id,
+    required String state,
+    required String city,
+    required String locality,
+  }) async {
+    try {
+      http.Response response = await http.put(
+        Uri.parse(
+          '$uri/api/user/$id',
+        ),
+        body: jsonEncode(<String, String>{
+          'state': state,
+          'city': city,
+          'locality': locality,
+        }),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+      manageHttpResponse(
+        response: response,
+        context: context,
+        onSuccess: () async {
+          final updatedUser = jsonDecode(response.body);
+          // Access Shared preferences for local data storage
+          // shared preferences allows us to store data locally on the device
+          SharedPreferences preferences = await SharedPreferences.getInstance();
+          // Encode the user data received from the backend as json
+          final userJson = jsonEncode(updatedUser);
+          // Update the application state with the user data using Riverpod
+          container.read(userProvider.notifier).setUser(userJson);
+          // Store the data in shared preferences for future
+          await preferences.setString('user', userJson);
+        },
+        onError: (error) {
+          showSnackBar(context, error);
+        },
+      );
+    } catch (e) {
+      print("Error:$e");
+    }
+  }
 }
