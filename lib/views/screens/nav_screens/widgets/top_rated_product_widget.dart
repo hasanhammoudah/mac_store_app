@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mac_store_app/controllers/product_controller.dart';
 import 'package:mac_store_app/provider/product_provider.dart';
+import 'package:mac_store_app/provider/top_rated_product_provider.dart';
 import 'package:mac_store_app/views/screens/nav_screens/widgets/product_item_widget.dart';
 
-class PopularProductWidget extends ConsumerStatefulWidget {
-  const PopularProductWidget({super.key});
+class TopRatedProductWidget extends ConsumerStatefulWidget {
+  const TopRatedProductWidget({super.key});
 
   @override
-  ConsumerState<PopularProductWidget> createState() =>
-      _PopularProductWidgetState();
+  ConsumerState<TopRatedProductWidget> createState() =>
+      _TopRatedProductWidgetState();
 }
 
-class _PopularProductWidgetState extends ConsumerState<PopularProductWidget> {
+class _TopRatedProductWidgetState extends ConsumerState<TopRatedProductWidget> {
   // late Future<List<Product>> futurePopularProducts;
   bool isLoading = true;
   @override
@@ -28,14 +29,13 @@ class _PopularProductWidgetState extends ConsumerState<PopularProductWidget> {
         isLoading = false;
       });
     }
-
   }
 
   Future<void> _fetchProduct() async {
     final ProductController _productController = ProductController();
     try {
-      final products = await _productController.getProducts();
-      ref.read(productProvider.notifier).setProducts(products);
+      final products = await _productController.loadTopRatedProducts();
+      ref.read(topRatedProductProvider.notifier).setProducts(products);
     } catch (e) {
       // Handle error
       print('Error fetching products: $e');
@@ -48,11 +48,14 @@ class _PopularProductWidgetState extends ConsumerState<PopularProductWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final products = ref.watch(productProvider);
+    final products = ref.watch(topRatedProductProvider);
     return SizedBox(
       height: 250,
       child: isLoading
-          ? const Center(child: CircularProgressIndicator(color: Colors.blue))
+          ? const Center(
+              child: CircularProgressIndicator(
+              color: Colors.blue,
+            ))
           : ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: products.length,
@@ -61,7 +64,8 @@ class _PopularProductWidgetState extends ConsumerState<PopularProductWidget> {
                 return ProductItemWidget(
                   product: product,
                 );
-              }),
+              },
+            ),
     );
   }
 }

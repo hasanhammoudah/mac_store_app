@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mac_store_app/models/promo_code.dart';
 import 'package:mac_store_app/views/features/checkout/widget/address_preview_card.dart';
 import 'package:mac_store_app/views/features/checkout/widget/bottom_navigation_bar.dart';
 import 'package:mac_store_app/views/features/checkout/widget/cart_item_list_view.dart';
@@ -15,6 +16,14 @@ class CheckoutScreen extends ConsumerStatefulWidget {
 
 class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   String selectedPaymentMethod = 'stripe';
+  PromoCode? _appliedPromo;
+
+  void _onPromoApplied(PromoCode promo) {
+    setState(() {
+      _appliedPromo = promo;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,22 +31,13 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         title: const Text('Checkout'),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16.0,
-          vertical: 15,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 15),
         child: Center(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              InkWell(
-                onTap: () {},
-                child: const AddressPreviewCard(),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
+              const AddressPreviewCard(),
+              const SizedBox(height: 10),
               Text(
                 'Your Item',
                 style: GoogleFonts.quicksand(
@@ -46,22 +46,29 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                 ),
               ),
               const CartItemListView(),
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
               PaymentMethod(
-                onChanged: (value) => {
+                onRemovePromo: () {
+                  setState(() {
+                    _appliedPromo = null; // 🔥 إزالة الكود الترويجي
+                  });
+                },
+                onChanged: (value) {
                   setState(() {
                     selectedPaymentMethod = value;
-                  })
+                  });
                 },
                 selectedPaymentMethod: selectedPaymentMethod,
-              )
+                onPromoApplied: _onPromoApplied, // 🔥 تمرير الدالة
+              ),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBarForCart(selectedPaymentMethod),
+      bottomNavigationBar: BottomNavigationBarForCart(
+        selectedPaymentMethod,
+        appliedPromo: _appliedPromo, // 🔥 تمرير الكود الترويجي هنا
+      ),
     );
   }
 }

@@ -1,30 +1,28 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import 'package:mac_store_app/global_variables.dart';
-import 'package:mac_store_app/models/banner.dart';
+import 'package:mac_store_app/models/vendor.dart';
 
-class BannerController {
-  //fetchn banner
-  Future<List<BannerModel>> loadBanners() async {
+class VendorController {
+  Future<List<Vendor>> loadVendors() async {
     try {
       http.Response response =
-          await http.get(Uri.parse("$uri/api/banner"), headers: {
+          await http.get(Uri.parse("$uri/api/vendors"), headers: {
         "Content-Type": "application/json; charset=UTF-8",
       });
       print(response.body);
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body);
-        List<BannerModel> banners =
-            data.map((banner) => BannerModel.fromJson(banner)).toList();
-        return banners;
+        List<Vendor> vendors =
+            data.map((banner) => Vendor.fromJson(banner)).toList();
+        return vendors;
       } else if (response.statusCode == 404) {
         return [];
       } else {
-        throw Exception('Failed to load banners');
+        throw Exception('Failed to load vendors');
       }
     } catch (e) {
-      throw Exception('Error loading banners: $e');
+      throw Exception('Error loading vendors: $e');
     }
   }
 }

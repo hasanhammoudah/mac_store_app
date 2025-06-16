@@ -47,9 +47,12 @@ class _BannerWidgetState extends ConsumerState<BannerWidget> {
           child: PageView.builder(
             itemCount: banners.length,
             itemBuilder: (context, index) {
-              return Image.network(
-                banners[index].image!,
-                fit: BoxFit.cover,
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.network(
+                  banners[index].image!,
+                  fit: BoxFit.cover,
+                ),
               );
             },
           )),

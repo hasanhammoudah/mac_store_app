@@ -23,11 +23,9 @@ class SubcategoryController {
               .toList();
           return subcategories;
         } else {
-          print('No subcategories found');
           return [];
         }
       } else if (response.statusCode == 404) {
-        print('No subcategories found');
         return [];
       } else {
         throw Exception('Failed to load subcategories');

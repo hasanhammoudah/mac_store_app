@@ -67,6 +67,11 @@ class FavoriteProvider extends StateNotifier<Map<String, Favorite>> {
     state = {...state};
     _saveFavoritesToSharedPreferences();
   }
+  void clearFavorites() {
+  state = {};
+  _saveFavoritesToSharedPreferences();
+}
+
 
   Map<String, Favorite> get getFavoriteItems => state;
 }

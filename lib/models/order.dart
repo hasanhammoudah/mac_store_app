@@ -17,25 +17,31 @@ class Order {
   final String buyerId;
   final bool processing;
   final bool delivered;
+  final String paymentStatus;
+  final String paymentIntentId;
+  final String paymentMethod;
+  final String productId;
 
-  Order({
-    required this.id,
-    required this.email,
-    required this.fullName,
-    required this.state,
-    required this.city,
-    required this.locality,
-    required this.productName,
-    required this.productPrice,
-    required this.quantity,
-    required this.category,
-    required this.image,
-    required this.vendorId,
-    required this.buyerId,
-    required this.processing,
-    required this.delivered,
-   
-  });
+  Order(
+      {required this.id,
+      required this.email,
+      required this.fullName,
+      required this.state,
+      required this.city,
+      required this.locality,
+      required this.productName,
+      required this.productPrice,
+      required this.quantity,
+      required this.category,
+      required this.image,
+      required this.vendorId,
+      required this.buyerId,
+      required this.processing,
+      required this.delivered,
+      required this.paymentStatus,
+      required this.paymentIntentId,
+      required this.paymentMethod,
+      required this.productId});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -54,8 +60,14 @@ class Order {
       'buyerId': buyerId,
       'processing': processing,
       'delivered': delivered,
+      'paymentStatus': paymentStatus,
+      'paymentIntentId': paymentIntentId,
+      'paymentMethod': paymentMethod,
+      'productId': productId,
     };
   }
+
+  String toJson() => json.encode(toMap());
 
   factory Order.fromJson(Map<String, dynamic> map) {
     return Order(
@@ -74,11 +86,10 @@ class Order {
       buyerId: map['buyerId'] as String,
       processing: map['processing'] as bool,
       delivered: map['delivered'] as bool,
+      paymentStatus: map['paymentStatus'] as String,
+      paymentIntentId: map['paymentIntentId'] as String,
+      paymentMethod: map['paymentMethod'] as String,
+      productId: map['productId'] ?? '',
     );
   }
-
-  String toJson() => json.encode(toMap());
-
-  // factory Order.fromJson(String source) =>
-  //     Order.fromMap(json.decode(source) as Map<String, dynamic>);
 }

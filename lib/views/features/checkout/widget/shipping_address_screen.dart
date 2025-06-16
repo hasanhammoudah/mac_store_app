@@ -175,12 +175,12 @@ class _ShippingAddressScreenState extends ConsumerState<ShippingAddressScreen> {
               _showLoadingDialog();
               try {
                 await _authController.updateUserLocation(
-                  context: context,
-                  id: user!.id,
-                  state: _stateController.text,
-                  city: _cityController.text,
-                  locality: _localityController.text,
-                );
+                    context: context,
+                    id: user!.id,
+                    state: _stateController.text,
+                    city: _cityController.text,
+                    locality: _localityController.text,
+                    ref: ref);
 
                 updatedUser.recreateUserState(
                   state: _stateController.text,
@@ -194,7 +194,7 @@ class _ShippingAddressScreenState extends ConsumerState<ShippingAddressScreen> {
                 Navigator.pop(context); // Close loading dialog on error
                 print('Error: $e');
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Failed to update location.')),
+                  const SnackBar(content: Text('Failed to update location.')),
                 );
               }
             }

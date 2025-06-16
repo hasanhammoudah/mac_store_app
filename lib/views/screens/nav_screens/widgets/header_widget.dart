@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mac_store_app/views/detail/screens/search_product_screen.dart';
 
 class HeaderWidget extends StatelessWidget {
   const HeaderWidget({super.key});
@@ -7,7 +8,7 @@ class HeaderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.20,
+      height: MediaQuery.of(context).size.height * 0.15,
       child: Stack(
         children: [
           Image.asset(
@@ -22,6 +23,14 @@ class HeaderWidget extends StatelessWidget {
               width: 250,
               height: 50,
               child: TextFormField(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SearchProductScreen(),
+                    ),
+                  );
+                },
                 decoration: InputDecoration(
                     hintText: 'Enter text',
                     hintStyle:

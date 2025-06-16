@@ -319,7 +319,7 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
                                             buyerId: widget.order.buyerId,
                                             email: widget.order.email,
                                             fullName: widget.order.fullName,
-                                            productId: widget.order.id,
+                                            productId: widget.order.productId,
                                             rating: rating,
                                             review: review,
                                             context: context,

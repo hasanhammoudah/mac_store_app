@@ -10,6 +10,7 @@ import 'package:mac_store_app/views/detail/widgets/inner_header_widget.dart';
 import 'package:mac_store_app/views/detail/widgets/subcategory_tile_widget.dart';
 import 'package:mac_store_app/views/screens/nav_screens/widgets/product_item_widget.dart';
 import 'package:mac_store_app/views/screens/nav_screens/widgets/reusable_text_widget.dart';
+import 'package:mac_store_app/views/screens/nav_screens/widgets/subCategory_product_screen.dart';
 
 class InnerCategoryScreenWidget extends StatefulWidget {
   const InnerCategoryScreenWidget({super.key, required this.category});
@@ -92,9 +93,21 @@ class _InnerCategoryScreenWidgetState extends State<InnerCategoryScreenWidget> {
                                           ? subCategories.length
                                           : end)
                                   .map(
-                                    (subcategory) => SubCategoryTileWidget(
-                                      image: subcategory.image,
-                                      title: subcategory.subCategoryName,
+                                    (subcategory) => GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                SubCategoryProductScreen(
+                                                    subcategory: subcategory),
+                                          ),
+                                        );
+                                      },
+                                      child: SubCategoryTileWidget(
+                                        image: subcategory.image,
+                                        title: subcategory.subCategoryName,
+                                      ),
                                     ),
                                   )
                                   .toList(),
