@@ -24,7 +24,7 @@ class Vendor {
     required this.role,
     required this.password,
     required this.token,
-    this.storeImage,
+    required this.storeImage,
     this.storeDescription,
   });
 
@@ -55,12 +55,10 @@ class Vendor {
       role: map['role'] as String? ?? "",
       password: map['password'] as String? ?? "",
       token: map['token'] as String? ?? "",
-      storeImage: map['storeImage'] as String?,
+      storeImage: map['storeImage'] as String? ?? "",
       storeDescription: map['storeDescription'] as String?,
     );
   }
 
   String toJson() => json.encode(toMap());
-
-
 }

@@ -161,17 +161,21 @@ class _ProductItemWidgetState extends ConsumerState<ProductItemWidget> {
                       onTap: () {
                         if (!widget.product.hasNextAvailableLabel) {
                           _cartProvider.addProductToCart(
-                            productName: widget.product.productName,
-                            category: widget.product.category,
-                            image: widget.product.images,
-                            productPrice: widget.product.productPrice,
-                            vendorId: widget.product.vendorId,
-                            productQuantity: widget.product.quantity,
-                            quantity: 1,
-                            productId: widget.product.id,
-                            description: widget.product.description,
-                            fullName: widget.product.fullName,
-                          );
+                              productName: widget.product.productName,
+                              category: widget.product.category,
+                              image: widget.product.images,
+                              productPrice: widget.product.productPrice,
+                              vendorId: widget.product.vendorId,
+                              productQuantity: widget.product.quantity,
+                              quantity: 1,
+                              productId: widget.product.id,
+                              description: widget.product.description,
+                              fullName: widget.product.fullName,
+                              hasDiscount: widget.product.hasDiscount,
+                              discountedPrice: widget.product.discountedPrice,
+                              isNewProduct: widget.product.isNewProduct,
+                              hasNextAvailableLabel:
+                                  widget.product.hasNextAvailableLabel);
                           showSnackBar(context, widget.product.productName);
                         }
                       },

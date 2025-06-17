@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mac_store_app/controllers/product_controller.dart';
+import 'package:mac_store_app/core/share_product_details.dart';
 import 'package:mac_store_app/models/product.dart';
 import 'package:mac_store_app/models/vendor.dart';
 import 'package:mac_store_app/provider/cart_provider.dart';
@@ -166,6 +167,12 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   : const Icon(
                       Icons.favorite_border,
                     ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.share),
+              onPressed: () {
+                shareProductDetails(widget.product);
+              },
             ),
           ],
           centerTitle: true,
@@ -433,17 +440,22 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                 return;
               }
               _cartProvider.addProductToCart(
-                productName: widget.product.productName,
-                category: widget.product.category,
-                image: widget.product.images,
-                productPrice: widget.product.productPrice,
-                vendorId: widget.product.vendorId,
-                productQuantity: widget.product.quantity,
-                quantity: 1,
-                productId: widget.product.id,
-                description: widget.product.description,
-                fullName: widget.product.fullName,
-              );
+                  productName: widget.product.productName,
+                  category: widget.product.category,
+                  image: widget.product.images,
+                  productPrice: widget.product.productPrice,
+                  vendorId: widget.product.vendorId,
+                  productQuantity: widget.product.quantity,
+                  quantity: 1,
+                  productId: widget.product.id,
+                  description: widget.product.description,
+                  fullName: widget.product.fullName,
+                  hasDiscount: widget.product.hasDiscount,
+                  discountedPrice: widget.product.hasDiscount
+                      ? widget.product.discountedPrice
+                      : null,
+                  isNewProduct: widget.product.isNewProduct,
+                  hasNextAvailableLabel: widget.product.hasNextAvailableLabel);
               showSnackBar(context, widget.product.productName);
             },
             child: Container(

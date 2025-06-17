@@ -19,6 +19,7 @@ dependencies:
   custom_rating_bar: ^3.0.0
   flutter_stripe: ^11.5.0
   flutter_dotenv: ^5.2.1
+  share_plus: ^11.0.0
 
 dev_dependencies:
   flutter_test:

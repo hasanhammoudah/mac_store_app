@@ -53,55 +53,58 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
         title: 'Stores',
         length: vendors.length.toString(),
       ),
-      body: GridView.builder(
-        itemCount: vendors.length,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: crossAxisCount,
-          childAspectRatio: childAspectRatio,
-          mainAxisSpacing: 8,
-          crossAxisSpacing: 8,
-        ),
-        itemBuilder: (context, index) {
-          final vendor = vendors[index];
-          return InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => VendorProductsScreen(
-                    vendor,
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: GridView.builder(
+          itemCount: vendors.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            childAspectRatio: childAspectRatio,
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
+          ),
+          itemBuilder: (context, index) {
+            final vendor = vendors[index];
+            return InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => VendorProductsScreen(
+                      vendor,
+                    ),
                   ),
-                ),
-              );
-            },
-            child: Column(
-              children: [
-                vendor.storeImage!.isEmpty
-                    ? CircleAvatar(
-                        radius: 50,
-                        child: Text(
-                          vendor.fullName[0].toUpperCase(),
-                          style: GoogleFonts.montserrat(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
+                );
+              },
+              child: Column(
+                children: [
+                  vendor.storeImage!.isEmpty
+                      ? CircleAvatar(
+                          radius: 50,
+                          child: Text(
+                            vendor.fullName[0].toUpperCase(),
+                            style: GoogleFonts.montserrat(
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
+                        )
+                      : CircleAvatar(
+                          radius: 50,
+                          backgroundImage: NetworkImage(vendor.storeImage!),
                         ),
-                      )
-                    : CircleAvatar(
-                        radius: 50,
-                        backgroundImage: NetworkImage(vendor.storeImage!),
-                      ),
-                Text(
-                  vendor.fullName,
-                  style: GoogleFonts.lato(
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.7,
+                  Text(
+                    vendor.fullName,
+                    style: GoogleFonts.lato(
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.7,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          );
-        },
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

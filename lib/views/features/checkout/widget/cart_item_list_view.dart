@@ -95,15 +95,29 @@ class CartItemListView extends ConsumerWidget {
                             const SizedBox(
                               width: 16,
                             ),
-                            Text(
-                              "\$${cartItem.productPrice.toStringAsFixed(2)}",
-                              style: GoogleFonts.robotoSerif(
-                                fontSize: 14,
-                                color: Colors.pink,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1.3,
-                              ),
-                            ),
+                            cartItem.hasDiscount &&
+                                    cartItem.discountedPrice != null
+                                ? Row(
+                                    children: [
+                                      Text(
+                                        '\$${cartItem.discountedPrice!.toStringAsFixed(2)}',
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                    ],
+                                  )
+                                : Text(
+                                    "\$${cartItem.productPrice.toStringAsFixed(2)}",
+                                    style: GoogleFonts.roboto(
+                                      color: Colors.pink,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                           ],
                         ),
                       ),

@@ -2,7 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mac_store_app/controllers/product_controller.dart';
+import 'package:mac_store_app/models/cart.dart';
 import 'package:mac_store_app/provider/cart_provider.dart';
+import 'package:mac_store_app/views/detail/widgets/product_detail_screen.dart';
 import 'package:mac_store_app/views/features/checkout/view/chekout_screen.dart';
 import 'package:mac_store_app/views/screens/main_screen.dart';
 
@@ -14,6 +17,51 @@ class CartScreen extends ConsumerStatefulWidget {
 }
 
 class _CartScreenState extends ConsumerState<CartScreen> {
+  int calculateDiscountPercentage(int originalPrice, int discountedPrice) {
+    return (((originalPrice - discountedPrice) / originalPrice) * 100).round();
+  }
+
+  List<Widget> buildLabels(Cart product) {
+    final labels = <Widget>[];
+
+    if (product.hasDiscount && product.discountedPrice != null) {
+      final percent = calculateDiscountPercentage(
+        product.productPrice,
+        product.discountedPrice!,
+      );
+      labels.add(_buildLabel('-$percent%', Colors.red));
+    }
+
+    if (product.isNewProduct) {
+      labels.add(_buildLabel('New', Colors.green));
+    }
+
+    if (product.hasNextAvailableLabel) {
+      labels.add(_buildLabel('Coming Soon', Colors.orange));
+    }
+
+    return labels;
+  }
+
+  Widget _buildLabel(String text, Color color) {
+    return Container(
+      margin: const EdgeInsets.only(right: 4, bottom: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 10,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final cartData = ref.watch(cartProvider);
@@ -166,23 +214,54 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                     ),
                   ),
                   ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: cartData.length,
-                      itemBuilder: (context, index) {
-                        final cartItem = cartData.values.toList()[index];
-                        return Card(
+                    shrinkWrap: true,
+                    itemCount: cartData.length,
+                    itemBuilder: (context, index) {
+                      final cartItem = cartData.values.toList()[index];
+                      return InkWell(
+                        onTap: () async {
+                          final ProductController productController =
+                              ProductController();
+                          final product =
+                              await productController.fetchProductsById(
+                                  productId: cartItem.productId,
+                                  context: context);
+
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return ProductDetailScreen(product: product);
+                          }));
+                        },
+                        child: Card(
                           child: SizedBox(
                             height: 200,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                SizedBox(
-                                  height: 100,
-                                  width: 100,
-                                  child: Image.network(
-                                    cartItem.image[0],
-                                    fit: BoxFit.cover,
-                                  ),
+                                Stack(
+                                  children: [
+                                    Container(
+                                      height: 150, // رفع الحجم
+                                      width: 150,
+                                      clipBehavior: Clip.hardEdge,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Image.network(
+                                        cartItem.image[0],
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 6,
+                                      left: 6,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: buildLabels(cartItem),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
@@ -206,14 +285,38 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                           color: Colors.grey,
                                         ),
                                       ),
-                                      Text(
-                                        "\$${cartItem.productPrice.toStringAsFixed(2)}",
-                                        style: GoogleFonts.roboto(
-                                          color: Colors.pink,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
+                                      cartItem.hasDiscount &&
+                                              cartItem.discountedPrice != null
+                                          ? Row(
+                                              children: [
+                                                Text(
+                                                  '\$${cartItem.discountedPrice!.toStringAsFixed(2)}',
+                                                  style: GoogleFonts.montserrat(
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.red,
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 8),
+                                                Text(
+                                                  '\$${cartItem.productPrice.toStringAsFixed(2)}',
+                                                  style: GoogleFonts.montserrat(
+                                                    fontSize: 13,
+                                                    color: Colors.grey,
+                                                    decoration: TextDecoration
+                                                        .lineThrough,
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          : Text(
+                                              "\$${cartItem.productPrice.toStringAsFixed(2)}",
+                                              style: GoogleFonts.roboto(
+                                                color: Colors.pink,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
                                       Row(
                                         children: [
                                           Container(
@@ -274,8 +377,10 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                               ],
                             ),
                           ),
-                        );
-                      })
+                        ),
+                      );
+                    },
+                  )
                 ],
               ),
             ),

@@ -36,7 +36,8 @@ class ProductController {
     }
   }
 
-    Future<List<Product>> fetchProductsByTag({required String tag,required BuildContext context}) async {
+  Future<List<Product>> fetchProductsByTag(
+      {required String tag, required BuildContext context}) async {
     // Fetch products from the server
     try {
       http.Response response = await http.get(
@@ -58,6 +59,31 @@ class ProductController {
         return [];
       } else {
         throw Exception('Failed to load products');
+      }
+    } catch (e) {
+      throw Exception('Error loading products: $e');
+    }
+  }
+
+  Future<Product> fetchProductsById(
+      {required String productId, required BuildContext context}) async {
+    // Fetch products from the server
+    try {
+      http.Response response = await http.get(
+        Uri.parse('$uri/api/product/$productId'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+      print('Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return Product.fromMap(data);
+      } else if (response.statusCode == 404) {
+        throw Exception('Product not found');
+      } else {
+        throw Exception('Failed to load product');
       }
     } catch (e) {
       throw Exception('Error loading products: $e');

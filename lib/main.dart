@@ -12,7 +12,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
 
-
   Stripe.publishableKey = dotenv.env['STRIPE_PUBLISHABLE_KEY']!;
   // Stripe.publishableKey =
   //     "pk_test_51RQOn0D8KrVmmdOIs9g10RXbwv61qgNaCdIh5gX4Gsqqw0entb7420V1HiUJHQ1BAhtZPK3VcibfzDQVS9vY3Xzi00ERG5KFsL";
@@ -44,21 +43,21 @@ class MyApp extends ConsumerWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: Builder(
-        builder: (context) {
-          return FutureBuilder(
-              future: _checkTokenAndSetUser(ref, context),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                final user = ref.watch(userProvider);
-                return user!.token.isNotEmpty ? MainScreen() : const LoginScreen();
-              });
-        }
-      ),
+      home: Builder(builder: (context) {
+        return FutureBuilder(
+            future: _checkTokenAndSetUser(ref, context),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              final user = ref.watch(userProvider);
+              return user!.token.isNotEmpty
+                  ? MainScreen()
+                  : const LoginScreen();
+            });
+      }),
     );
   }
 }

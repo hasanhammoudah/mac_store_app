@@ -48,6 +48,10 @@ class CartNotifier extends StateNotifier<Map<String, Cart>> {
     required String productId,
     required String description,
     required String fullName,
+    required bool hasDiscount,
+    required int? discountedPrice,
+    required bool isNewProduct,
+    required bool hasNextAvailableLabel,
   }) {
     //Check if the product is already in the cart
     if (state.containsKey(productId)) {
@@ -65,6 +69,10 @@ class CartNotifier extends StateNotifier<Map<String, Cart>> {
           productId: state[productId]!.productId,
           description: state[productId]!.description,
           fullName: state[productId]!.fullName,
+          hasDiscount: state[productId]!.hasDiscount,
+          discountedPrice: state[productId]!.discountedPrice,
+          isNewProduct: state[productId]!.isNewProduct,
+          hasNextAvailableLabel: state[productId]!.hasNextAvailableLabel,
         ),
       };
       _saveCartToSharedPreferences();
@@ -98,6 +106,10 @@ class CartNotifier extends StateNotifier<Map<String, Cart>> {
           productId: productId,
           description: description,
           fullName: fullName,
+          hasDiscount: hasDiscount,
+          discountedPrice: discountedPrice,
+          isNewProduct: isNewProduct,
+          hasNextAvailableLabel: hasNextAvailableLabel,
         ),
       };
       _saveCartToSharedPreferences();
@@ -153,10 +165,28 @@ class CartNotifier extends StateNotifier<Map<String, Cart>> {
   double calculateTotalAmount() {
     double totalAmount = 0.0;
     state.forEach((productId, cartItem) {
-      totalAmount += cartItem.productPrice * cartItem.quantity;
+      final actualPrice =
+          cartItem.hasDiscount && cartItem.discountedPrice != null
+              ? cartItem.discountedPrice!
+              : cartItem.productPrice;
+      totalAmount += actualPrice * cartItem.quantity;
     });
     return totalAmount;
   }
+  //Another way
+//   double calculateTotalAmount() {
+//   double totalAmount = 0.0;
+
+//   for (final cartItem in state.values) {
+//     final actualPrice = cartItem.hasDiscount && cartItem.discountedPrice != null
+//         ? cartItem.discountedPrice!
+//         : cartItem.productPrice;
+
+//     totalAmount += actualPrice * cartItem.quantity;
+//   }
+
+//   return totalAmount;
+// }
 
   //Method to clear all items in the cart
   void clearCart() {
@@ -164,7 +194,6 @@ class CartNotifier extends StateNotifier<Map<String, Cart>> {
     state = {...state};
     _saveCartToSharedPreferences();
   }
-  
 
   Map<String, Cart> get getCartItems => state;
 }

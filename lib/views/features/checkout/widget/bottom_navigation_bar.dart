@@ -25,15 +25,21 @@ class _BottomNavigationBarForCartState
   bool isLoading = false;
 
   double _calculateDiscountedTotal(Map<String, dynamic> cartData) {
-    final originalTotal = cartData.values
-        .fold(0.0, (sum, item) => sum + (item.productPrice * item.quantity));
-    if (widget.appliedPromo == null) return originalTotal;
+    final productLevelDiscountedTotal = cartData.values.fold(0.0, (sum, item) {
+      final price = item.hasDiscount && item.discountedPrice != null
+          ? item.discountedPrice!
+          : item.productPrice;
+      return sum + (price * item.quantity);
+    });
+
+    if (widget.appliedPromo == null) return productLevelDiscountedTotal;
 
     final promo = widget.appliedPromo!;
     if (promo.discountType == 'percentage') {
-      return originalTotal - (originalTotal * promo.discountValue / 100);
+      return productLevelDiscountedTotal -
+          (productLevelDiscountedTotal * promo.discountValue / 100);
     } else {
-      return originalTotal - promo.discountValue;
+      return productLevelDiscountedTotal - promo.discountValue;
     }
   }
 
@@ -122,8 +128,13 @@ class _BottomNavigationBarForCartState
     final _cartProvider = ref.read(cartProvider.notifier);
     final cartData = ref.read(cartProvider);
 
-    final totalBefore = cartData.values
-        .fold(0.0, (sum, item) => sum + (item.productPrice * item.quantity));
+    final totalBefore = cartData.values.fold(0.0, (sum, item) {
+      final price = item.hasDiscount && item.discountedPrice != null
+          ? item.discountedPrice!
+          : item.productPrice;
+      return sum + (price * item.quantity);
+    });
+
     final totalAfter = _calculateDiscountedTotal(cartData);
 
     return Padding(
